@@ -61,7 +61,6 @@ fn main() {
             return;
         }
     };
-
     let mut buffer: Vec<u32> = Vec::with_capacity(WIDTH * HEIGHT);
 
     // Small window for colour sample.
@@ -75,14 +74,9 @@ fn main() {
             return;
         }
     };
-
     let mut sample_win_buf: [u32; SAMPLE_WIN_BUF_SIZE] = [0; SAMPLE_WIN_BUF_SIZE];
 
-
     let mut size = (0, 0);
-
-    let nx = WIDTH;
-    let ny = HEIGHT;
 
     while window.is_open() && !window.is_key_down(Key::Escape) {
         {
@@ -94,11 +88,11 @@ fn main() {
         }
 
         let mut i = 0;
-        for y in (0..ny).rev() {
-            for x in 0..nx {
+        for y in (0..HEIGHT).rev() {
+            for x in 0..WIDTH {
                 // Use the same coordinate system as the mouse - top-left: 0, 0.
-                let coord_y = ny - y;
-                let hsvf = coords_to_hsvf(nx, ny, x as usize, coord_y as usize, false);
+                let coord_y = HEIGHT - y;
+                let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, coord_y as usize, false);
 
                 let rgbf = match hsvf.to_rgbf() {
                     Ok(v)   => v,
@@ -119,7 +113,7 @@ fn main() {
         }
 
         if let Some((x, y)) = window.get_mouse_pos(MouseMode::Discard) {
-            let hsvf = coords_to_hsvf(nx, ny, x as usize, y as usize, false);
+            let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, y as usize, false);
 
             let rgbf = match hsvf.to_rgbf() {
                 Ok(v)   => v,
@@ -153,7 +147,6 @@ fn main() {
         };
 
         window.update_with_buffer(&buffer).unwrap();
-
         sample_win.update_with_buffer(&sample_win_buf).unwrap();
     }
 }

@@ -80,16 +80,16 @@ impl RGBf {
 
 impl RGB {
     pub fn to_hsv(&self) -> HSV {
-        let r1: f32;
-        let g1: f32;
-        let b1: f32;
+        let r: f32;
+        let g: f32;
+        let b: f32;
 
         let sorted_floats = {
-            r1 = f32::from(self.r) / 255.0;
-            g1 = f32::from(self.g) / 255.0;
-            b1 = f32::from(self.b) / 255.0;
+            r = f32::from(self.r) / 255.0;
+            g = f32::from(self.g) / 255.0;
+            b = f32::from(self.b) / 255.0;
 
-            let mut floats: Vec<f32> = vec![r1, g1, b1];
+            let mut floats: Vec<f32> = vec![r, g, b];
             floats.sort_by(|a, b| a.partial_cmp(b).unwrap_or(Ordering::Equal));
 
             floats
@@ -100,26 +100,26 @@ impl RGB {
         let d = cmax - cmin;
 
         // Hue.
-        let h = match cmax {
-            _ if r1 == cmax => (((g1 - b1) / d) % 6.0) * 60.0,
-            _ if g1 == cmax => (((b1 - r1) / d) + 2.0) * 60.0,
-            _ if b1 == cmax => (((r1 - g1) / d) + 4.0) * 60.0,
+        let hue = match cmax {
+            _ if r == cmax => (((g - b) / d) % 6.0) * 60.0,
+            _ if g == cmax => (((b - r) / d) + 2.0) * 60.0,
+            _ if b == cmax => (((r - g) / d) + 4.0) * 60.0,
             _ => 0.0,
         };
 
         // Saturation.
-        let s = match cmax {
+        let sat = match cmax {
             _ if cmax == 0.0 => 0.0,
             _ => d / cmax,
         };
 
         // Value / brightness.
-        let v = cmax;
+        let val = cmax;
 
         HSV {
-            h: h as u16,
-            s: (s * 100.0) as u8,
-            v: (v * 100.0) as u8,
+            h: hue as u16,
+            s: (sat * 100.0) as u8,
+            v: (val * 100.0) as u8,
         }
     }
 }
