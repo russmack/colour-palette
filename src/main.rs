@@ -16,37 +16,26 @@ const SAMPLE_WIN_HEIGHT: usize = 25;
 
 const SAMPLE_WIN_BUF_SIZE: usize = SAMPLE_WIN_WIDTH * SAMPLE_WIN_HEIGHT;
 
+const COORDS_ORIGIN_TOP_LEFT: bool = true;
+
 fn coords_to_hsvf(width: usize, height: usize, x: usize, y: usize, invert_y: bool) -> HSVf {
     let hue: f64 = (360.0 / width as f64) * x as f64;
 
-    let hsvf: HSVf = if !invert_y {
-        // This is for using coordinates have top-left origin: 0, 0.
-        let sat: f64 = match y {
-            _ if y <= height/2 => y as f64 * (1.0 / (height/2) as f64),
-            _ => 1.0,
-        };
-
-        let val: f64 = match y {
-            _ if y > height/2 => (height - y) as f64 * (1.0 / (height/2) as f64),
-            _ => 1.0,
-
-        };
-        HSVf {h: hue, s: sat, v: val}
-    } else {
-        // This is for using coordinates have bottom-left origin: 0, 0.
-        let sat: f64 = match y {
-            _ if y >= height/2 => (height-y) as f64 * (1.0 / (height/2) as f64),
-            _ => 1.0,
-        };
-
-        let val: f64 = match y {
-            _ if y < height/2 => y as f64 * (1.0 / (height/2) as f64),
-            _ => 1.0,
-        };
-        HSVf {h: hue, s: sat, v: val}
+    let sat: f64 = match y {
+        _ if y <= height/2 => y as f64 * (1.0 / (height/2) as f64),
+        _ => 1.0,
     };
 
-    hsvf
+    let val: f64 = match y {
+        _ if y > height/2 => (height - y) as f64 * (1.0 / (height/2) as f64),
+        _ => 1.0,
+    };
+
+    if invert_y {
+        HSVf {h: hue, s: val, v: sat}  // Bottom-left origin: 0, 0.
+    } else {
+        HSVf {h: hue, s: sat, v: val}  // Top-left origin: 0, 0.
+    }
 }
 
 fn main() {
@@ -92,7 +81,7 @@ fn main() {
             for x in 0..WIDTH {
                 // Use the same coordinate system as the mouse - top-left: 0, 0.
                 let coord_y = HEIGHT - y;
-                let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, coord_y as usize, false);
+                let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, coord_y as usize, !COORDS_ORIGIN_TOP_LEFT);
 
                 let rgbf = match hsvf.to_rgbf() {
                     Ok(v)   => v,
@@ -113,7 +102,7 @@ fn main() {
         }
 
         if let Some((x, y)) = window.get_mouse_pos(MouseMode::Discard) {
-            let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, y as usize, false);
+            let hsvf = coords_to_hsvf(WIDTH, HEIGHT, x as usize, y as usize, !COORDS_ORIGIN_TOP_LEFT);
 
             let rgbf = match hsvf.to_rgbf() {
                 Ok(v)   => v,

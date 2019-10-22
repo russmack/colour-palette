@@ -11,7 +11,7 @@ A Rust program which displays a colour palette.
 ## Build
 ```
 git clone https://github.com/russmack/colour-palette.git
-cargo build
+cargo build --release
 ```
 
 ## Usage
