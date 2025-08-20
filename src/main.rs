@@ -11,10 +11,13 @@ use colour::HSVf;
 const WIDTH: usize = 720;
 const HEIGHT: usize = 200;
 
+const BUFFER_WIDTH: usize = 720;
+const BUFFER_HEIGHT: usize = 200;
+
 const SAMPLE_WIN_WIDTH: usize = 100;
 const SAMPLE_WIN_HEIGHT: usize = 25;
 
-const SAMPLE_WIN_BUF_SIZE: usize = SAMPLE_WIN_WIDTH * SAMPLE_WIN_HEIGHT;
+const SAMPLE_WIN_BUF_SIZE: usize = WIDTH * HEIGHT;
 
 const COORDS_ORIGIN_TOP_LEFT: bool = true;
 
@@ -40,7 +43,7 @@ fn coords_to_hsvf(width: usize, height: usize, x: usize, y: usize, invert_y: boo
 
 fn main() {
     // Main, big window for colour palette.
-    let mut window = match Window::new("Weekend Raytracer 01", WIDTH, HEIGHT, 
+    let mut window = match Window::new("Colour Palette", WIDTH, HEIGHT, 
         WindowOptions {
             ..WindowOptions::default()
         }) {
@@ -135,8 +138,8 @@ fn main() {
             }
         };
 
-        window.update_with_buffer(&buffer).unwrap();
-        sample_win.update_with_buffer(&sample_win_buf).unwrap();
+        window.update_with_buffer(&buffer, BUFFER_WIDTH, BUFFER_HEIGHT).unwrap();
+        sample_win.update_with_buffer(&sample_win_buf, BUFFER_WIDTH, BUFFER_HEIGHT).unwrap();
     }
 }
 
